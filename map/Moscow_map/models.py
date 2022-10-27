@@ -1,4 +1,5 @@
 from django.db import models
+import PIL
 
 
 class MapModels(models.Model):
@@ -7,4 +8,8 @@ class MapModels(models.Model):
     text = models.TextField()
     coordinates_lng = models.CharField(max_length=200)
     coordinates_lat = models.CharField(max_length=200)
+
+
+class Image(models.Model):
+    img = models.ImageField()
 # Create your models here.
