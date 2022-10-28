@@ -11,5 +11,5 @@ class MapModels(models.Model):
 
 
 class Image(models.Model):
-    img = models.ImageField()
+    img = models.ImageField(upload_to='madia/')
 # Create your models here.
