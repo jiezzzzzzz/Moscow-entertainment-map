@@ -1,6 +1,7 @@
 from django.db import models
 import PIL
 
+
 class Places(models.Model):
     title = models.CharField(max_length=200)
     description_short = models.CharField(max_length=200)
@@ -14,7 +15,7 @@ class Places(models.Model):
 
 
 class Image(models.Model):
-    image = models.ImageField(upload_to='media/', null=True)
+    image = models.ImageField(upload_to='image', null=True)
     image_id = models.IntegerField(null=True)
     places = models.ForeignKey(Places, on_delete=models.CASCADE, related_name='img')
 
