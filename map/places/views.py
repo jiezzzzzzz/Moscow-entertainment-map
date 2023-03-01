@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import Places
+from django.http import HttpResponse
 
 
 def convert_in_json(location):
@@ -24,3 +25,7 @@ def start_page(request):
             "type": "FeatureCollection",
             "features": [convert_in_json(location) for location in locations]}
     return render(request, 'index.html', context=context)
+
+
+def place_details(request, place_id):
+    return HttpResponse('"Крыши24"')
