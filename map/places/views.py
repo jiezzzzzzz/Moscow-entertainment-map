@@ -1,36 +1,26 @@
 from django.shortcuts import render
+from .models import Places
+
+
+def convert_in_json(location):
+    serialized = {"type": "Feature",
+                           "geometry": {
+                               "type": "Point",
+                               "coordinates": [location.coordinates_lng, location.coordinates_lat]
+                           },
+                           "properties": {
+                               "title": location.title,
+                               "placeId": location.place_id,
+                               "detailsUrl": ""
+                           }
+                           }
+    return serialized
 
 
 def start_page(request):
-    context = {
-        'data': {
+    locations = Places.objects.all()
+    context = {}
+    context['data'] = {
             "type": "FeatureCollection",
-            "features": [
-                {
-                    "type": "Feature",
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": [37.62, 55.793676]
-                    },
-                    "properties": {
-                        "title": "«Легенды Москвы",
-                        "placeId": "moscow_legends",
-                        "detailsUrl": "static/map/places/moscow_legends.json"
-                    }
-                },
-                {
-                    "type": "Feature",
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": [37.64, 55.753676]
-                    },
-                    "properties": {
-                        "title": "Крыши24.рф",
-                        "placeId": "roofs24",
-                        "detailsUrl": "static/map/places/roofs24.json"
-                    }
-                }
-            ]
-        }
-    }
+            "features": [convert_in_json(location) for location in locations]}
     return render(request, 'index.html', context=context)
