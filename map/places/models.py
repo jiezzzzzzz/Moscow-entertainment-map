@@ -4,7 +4,7 @@ import PIL
 
 class Places(models.Model):
     title = models.CharField(max_length=200)
-    description_short = models.CharField(max_length=200)
+    description_short = models.TextField()
     text = models.TextField()
     coordinates_lng = models.CharField(max_length=200)
     coordinates_lat = models.CharField(max_length=200)
