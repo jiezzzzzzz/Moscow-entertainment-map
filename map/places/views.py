@@ -3,6 +3,7 @@ from .models import Places, Image
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 
+
 def convert_in_json(location):
     serialized = {"type": "Feature",
                            "geometry": {
