@@ -1,11 +1,12 @@
 from django.db import models
 import PIL
+from tinymce.models import HTMLField
 
 
 class Places(models.Model):
     title = models.CharField(max_length=200)
     description_short = models.TextField()
-    text = models.TextField()
+    text = HTMLField()
     coordinates_lng = models.CharField(max_length=200)
     coordinates_lat = models.CharField(max_length=200)
     place_id = models.CharField(max_length=25, unique=True)
