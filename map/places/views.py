@@ -30,7 +30,7 @@ def start_page(request):
 
 def place_details(request, place_id):
     object = get_object_or_404(Places, pk=place_id)
-    place_images = Image.objects.filter()
+    place_images = object.img.all()
 
     context = {
         'title': object.title,
