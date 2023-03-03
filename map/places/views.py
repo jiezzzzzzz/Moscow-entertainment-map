@@ -12,7 +12,7 @@ def convert_in_json(location):
                            "properties": {
                                "title": location.title,
                                "placeId": location.place_id,
-                               "detailsUrl": ""
+                               "detailsUrl": f"http://127.0.0.1:8000/places/{location.place_id}/"
                            }
                            }
     return serialized
