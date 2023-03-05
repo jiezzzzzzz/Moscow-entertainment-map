@@ -15,14 +15,14 @@
 
 Чтобы все заработало, нужно настроить переменные окружения в .env файле. 
 
-<code>
+```
 DEBUG=False #установить True, если не планируете деплоить
 SECRET_KEY= # ваш секретный ключ Django
 DATABASE_URL= # ссылка на базу данных
 ALLOWED_HOSTS='.pythonanywhere.com' # можно указать свой
 #STATIC_ROOT= # последние два аргумента необязательные
 #MEDIA_ROOT=
-</code>
+```
 
 Скачать проект себе на машину:
 <span><code>git clone https://github.com/jiezzzzzzz/Moscow-entertainment-map</span></code>
