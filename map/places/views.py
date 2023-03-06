@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Place, Image
+from .models import Places, Image
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 import PIL
@@ -13,7 +13,7 @@ def convert_in_json(location):
                            },
                            "properties": {
                                "title": location.title,
-                               "placeId": location.id,
+                               "placeId": location.place_id,
                                "detailsUrl": f"http://127.0.0.1:8000/places/{location.id}/"
                            }
                   }
@@ -22,7 +22,7 @@ def convert_in_json(location):
 
 
 def start_page(request):
-    locations = Place.objects.all()
+    locations = Places.objects.all()
     context = {}
     context['data'] = {
             "type": "FeatureCollection",
@@ -30,8 +30,8 @@ def start_page(request):
     return render(request, 'index.html', context=context)
 
 
-def place_details(request):
-    object = get_object_or_404(Place)
+def place_details(request, place_id):
+    object = get_object_or_404(Places, pk=place_id)
     place_images = object.img.all()
 
     context = {

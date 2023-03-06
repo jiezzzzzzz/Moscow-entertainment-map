@@ -44,12 +44,10 @@ class Command(BaseCommand):
             logger.info(f'Location "{title}" updated')
         return place, created
 
-    def saving_images(self, places_id: int) -> None:
-        try:
-            images: list = self.place_raw['imgs']
-        except KeyError as e:
-            logger.error(f'Key {e} invalid')
-            return
+    def saving_images(self) -> None:
+        images: list = self.place_raw['imgs']
+        breakpoint()
+        print(images)
 
         for img in images:
             image_name = img.split('/')[-1]
@@ -61,6 +59,7 @@ class Command(BaseCommand):
             )
             if created:
                 logger.info(f'The file: "{img.image.name}" saved')
+
 
     def handle(self, *args, **options):
         try:
@@ -79,7 +78,7 @@ class Command(BaseCommand):
             logger.info('Server response is "OK"')
             place, place_created = self.add_or_update_place()
             if place_created:
-                self.saving_images(place.id)
+                self.saving_images()
 
     def add_arguments(self, parser):
         parser.add_argument('place', action='store')
