@@ -1,5 +1,4 @@
 from django.db import models
-import PIL
 from tinymce.models import HTMLField
 
 

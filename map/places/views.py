@@ -2,7 +2,7 @@ from django.shortcuts import render
 from .models import Places, Image
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
-from .admin import PlacesAdmin
+import PIL
 
 
 def convert_in_json(location):
@@ -16,7 +16,8 @@ def convert_in_json(location):
                                "placeId": location.place_id,
                                "detailsUrl": f"http://127.0.0.1:8000/places/{location.id}/"
                            }
-                           }
+                  }
+
     return serialized
 
 
@@ -35,7 +36,7 @@ def place_details(request, place_id):
 
     context = {
         'title': object.title,
-        'imgs': [img.image.url for img in place_images],
+        'imgs': [str(image.image.url) for image in place_images],
         'description_short': object.description_short,
         'description_long': object.description_long,
         'coordinates': {

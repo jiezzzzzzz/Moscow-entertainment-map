@@ -18,10 +18,6 @@ class Command(BaseCommand):
         self.place_raw = {}
 
     def add_or_update_place(self) -> tuple:
-        """
-        Adding a location if there are no such coordinates
-        or updating an existing one
-        """
         try:
             title: str = self.place_raw['title']
             lng: float = self.place_raw['coordinates']['lng']
@@ -49,24 +45,23 @@ class Command(BaseCommand):
         return place, created
 
     def saving_images(self, places_id: int) -> None:
-        """Saving images for location"""
         try:
             images: list = self.place_raw['imgs']
         except KeyError as e:
             logger.error(f'Key {e} invalid')
             return
 
-        for image in images:
-            image_name = image.split('/')[-1]
+        for img in images:
+            image_name = img.split('/')[-1]
             image_content = ContentFile(
-                requests.get(image, stream=True).content, name=image_name
+                requests.get(img, stream=True).content, name=image_name
             )
             image, created = Image.objects.get_or_create(
                 places_id=places_id,
                 image=image_content
             )
             if created:
-                logger.info(f'The file: "{image.file.name}" saved')
+                logger.info(f'The file: "{img.image.name}" saved')
 
     def handle(self, *args, **options):
         try:
