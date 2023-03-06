@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Places, Image
+from .models import Place, Image
 from django.utils.safestring import mark_safe
 from adminsortable2.admin import SortableStackedInline, SortableAdminBase
 
@@ -12,7 +12,7 @@ class ImageInline(SortableStackedInline):
         return mark_safe(f'<img src="{object.image.url}" height=200>')
 
 
-@admin.register(Places)
+@admin.register(Place)
 class PlacesAdmin(SortableAdminBase, admin.ModelAdmin):
     inlines = [
         ImageInline,

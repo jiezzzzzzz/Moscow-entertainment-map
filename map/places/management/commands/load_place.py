@@ -3,7 +3,7 @@ from django.core.files.base import ContentFile
 from django.core.management import BaseCommand
 from loguru import logger
 
-from places.models import Places, Image
+from places.models import Place, Image
 
 
 class Command(BaseCommand):
@@ -29,7 +29,7 @@ class Command(BaseCommand):
         description_short = self.place_raw.get('description_short', '')
         description_long = self.place_raw.get('description_long', '')
 
-        place, created = Places.objects.update_or_create(
+        place, created = Place.objects.update_or_create(
             lng=lng,
             lat=lat,
             defaults={
@@ -57,7 +57,6 @@ class Command(BaseCommand):
                 requests.get(img, stream=True).content, name=image_name
             )
             image, created = Image.objects.get_or_create(
-                places_id=places_id,
                 image=image_content
             )
             if created:
