@@ -3,7 +3,7 @@ from django.core.files.base import ContentFile
 from django.core.management import BaseCommand
 from loguru import logger
 
-from places.models import Places, Image
+from places.models import Place, Image
 
 
 class Command(BaseCommand):
@@ -29,7 +29,7 @@ class Command(BaseCommand):
         description_short = self.place_raw.get('description_short', '')
         description_long = self.place_raw.get('description_long', '')
 
-        place, created = Places.objects.update_or_create(
+        place, created = Place.objects.update_or_create(
             lng=lng,
             lat=lat,
             defaults={
@@ -44,9 +44,9 @@ class Command(BaseCommand):
             logger.info(f'Location "{title}" updated')
         return place, created
 
-    def saving_images(self, places_id: int) -> None:
+    def saving_images(self) -> None:
         try:
-            images: list = self.place_raw['imgs']
+            images: list = self.place_raw['image']
         except KeyError as e:
             logger.error(f'Key {e} invalid')
             return
@@ -57,7 +57,6 @@ class Command(BaseCommand):
                 requests.get(img, stream=True).content, name=image_name
             )
             image, created = Image.objects.get_or_create(
-                places_id=places_id,
                 image=image_content
             )
             if created:
@@ -80,7 +79,7 @@ class Command(BaseCommand):
             logger.info('Server response is "OK"')
             place, place_created = self.add_or_update_place()
             if place_created:
-                self.saving_images(place.id)
+                self.saving_images()
 
     def add_arguments(self, parser):
         parser.add_argument('place', action='store')
