@@ -15,11 +15,11 @@ class Place(models.Model):
 
 class Image(models.Model):
     image = models.ImageField(upload_to='image')
-    image_number = models.IntegerField(default=1, db_index=True, unique=True)
+    image_number = models.IntegerField(default=1, db_index=True)
     places = models.ForeignKey(Place, on_delete=models.CASCADE, related_name='imgs')
 
     def __str__(self):
-        return f'{self.places} - {self.image_id}'
+        return f'{self.places} - {self.image_number}'
 
     class Meta:
         ordering = ['image_number']

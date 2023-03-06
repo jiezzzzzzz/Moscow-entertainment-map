@@ -45,11 +45,9 @@ class Command(BaseCommand):
         return place, created
 
     def saving_images(self) -> None:
-        try:
-            images: list = self.place_raw['image']
-        except KeyError as e:
-            logger.error(f'Key {e} invalid')
-            return
+        images: list = self.place_raw['imgs']
+        breakpoint()
+        print(images)
 
         for img in images:
             image_name = img.split('/')[-1]
@@ -61,6 +59,7 @@ class Command(BaseCommand):
             )
             if created:
                 logger.info(f'The file: "{img.image.name}" saved')
+
 
     def handle(self, *args, **options):
         try:
