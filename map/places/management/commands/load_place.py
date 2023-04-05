@@ -1,84 +1,52 @@
+import os
+
 import requests
 from django.core.files.base import ContentFile
-from django.core.management import BaseCommand
-from loguru import logger
+from django.core.management.base import BaseCommand
 
 from places.models import Place, Image
 
 
-class Command(BaseCommand):
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) '
-                      'AppleWebKit/537.36 (KHTML, like Gecko) '
-                      'Chrome/39.0.2171.95 Safari/537.36'
-    }
+def load_place(url):
+    response = requests.get(url)
+    response.raise_for_status()
+    raw_place = response.json()
 
-    def __init__(self):
-        super().__init__()
-        self.place_raw = {}
+    place, place_created = Place.objects.get_or_create(
+        title=raw_place['title'],
+        defaults={
+            'description_short': raw_place['description_short'],
+            'description_long': raw_place['description_long'],
+            'lng': raw_place['coordinates']['lng'],
+            'lat': raw_place['coordinates']['lat']}
+    )
+    if place_created:
+        print(f'Добавляю место {raw_place["title"]}')
+    else:
+        print(f'Место {raw_place["title"]} уже добавлено')
+        return
 
-    def add_or_update_place(self) -> tuple:
-        try:
-            title: str = self.place_raw['title']
-            lng: float = self.place_raw['coordinates']['lng']
-            lat: float = self.place_raw['coordinates']['lat']
-        except KeyError as e:
-            logger.error(f'Key {e} invalid')
-            return None, False
+    for position, pic_url in enumerate(raw_place['imgs']):
+        response = requests.get(pic_url)
+        response.raise_for_status()
 
-        description_short = self.place_raw.get('description_short', '')
-        description_long = self.place_raw.get('description_long', '')
+        img = ContentFile(response.content, name='file')
 
-        place, created = Place.objects.update_or_create(
-            lng=lng,
-            lat=lat,
-            defaults={
-                'title': title,
-                'description_short': description_short,
-                'description_long': description_long,
-            },
+        image_field= Image.objects.create(
+            place=place,
+            image = img
         )
-        if created:
-            logger.info(f'Location "{title}" saved')
-        else:
-            logger.info(f'Location "{title}" updated')
-        return place, created
-
-    def saving_images(self) -> None:
-        images: list = self.place_raw['imgs']
-        breakpoint()
-        print(images)
-
-        for img in images:
-            image_name = img.split('/')[-1]
-            image_content = ContentFile(
-                requests.get(img, stream=True).content, name=image_name
-            )
-            image, created = Image.objects.get_or_create(
-                image=image_content
-            )
-            if created:
-                logger.info(f'The file: "{img.image.name}" saved')
 
 
-    def handle(self, *args, **options):
-        try:
-            with requests.get(
-                    options['place'], headers=self.headers
-            ) as response:
-                if not response.ok:
-                    logger.error(
-                        f'''Server response is: 
-                        {response.url}::->::{response.status_code}'''
-                    )
-        except Exception as e:
-            logger.error(e)
-        else:
-            self.place_raw = response.json()
-            logger.info('Server response is "OK"')
-            place, place_created = self.add_or_update_place()
-            if place_created:
-                self.saving_images()
+class Command(BaseCommand):
 
     def add_arguments(self, parser):
-        parser.add_argument('place', action='store')
+        parser.add_argument('place_url', nargs='+', type=str)
+
+    def handle(self, *args, **options):
+        for url in options['place_url']:
+            try:
+                load_place(url)
+            except requests.exceptions.RequestException:
+                print(f'\nВозникла ошибка с адресом {url} \n')
+                continue

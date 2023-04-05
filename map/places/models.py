@@ -15,12 +15,17 @@ class Place(models.Model):
 
 class Image(models.Model):
     image = models.ImageField(upload_to='image')
-    image_number = models.IntegerField()
-    places = models.ForeignKey(Place, on_delete=models.CASCADE, related_name='imgs')
+    image_number = models.IntegerField(default=0, blank=True)
+    place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name='imgs')
 
     def __str__(self):
-        return f'{self.places} - {self.image_number}'
+        return f'{self.place} - {self.image_number}'
 
     class Meta:
         ordering = ['image_number']
+
+    @property
+    def photo_url(self):
+        if self.image and hasattr(self.image, 'url'):
+            return self.image.url
 

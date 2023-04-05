@@ -2,16 +2,15 @@ from django.shortcuts import render
 from .models import Place, Image
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
-import PIL
-
+import sqlite3
 
 def convert_in_json(location):
     serialized = {"type": "Feature",
-                           "geometry": {
+                  "geometry": {
                                "type": "Point",
                                "coordinates": [location.lng, location.lat]
-                           },
-                           "properties": {
+                                         },
+                  "properties": {
                                "title": location.title,
                                "placeId": location.id,
                                "detailsUrl": f"http://127.0.0.1:8000/places/{location.id}/"
@@ -30,13 +29,19 @@ def start_page(request):
     return render(request, 'index.html', context=context)
 
 
-def place_details(request):
-    object = get_object_or_404(Place)
-    place_images = object.img.all()
+def place_details(request, place_id):
+    object = get_object_or_404(Place, pk=place_id)
+    place_images = object.imgs.all()
+    con = sqlite3.connect("db.sqlite3")
+    cursor = con.cursor()
+
+    cursor.execute("SELECT * from sqlite_master where type = 'Place'")
+    print(cursor.fetchall())
+    print(place_images)
 
     context = {
         'title': object.title,
-        'imgs': [str(image.image.url) for image in place_images],
+        'imgs': [img.image.url for img in place_images],
         'description_short': object.description_short,
         'description_long': object.description_long,
         'coordinates': {
