@@ -1,5 +1,3 @@
-import os
-
 import requests
 from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand
@@ -34,7 +32,7 @@ def load_place(url):
 
         image_field= Image.objects.create(
             place=place,
-            image = img
+            image=img
         )
 
 
