@@ -5,6 +5,7 @@
 Посмотреть сайт можно [тут](http://polya.pythonanywhere.com/).
 Развернут на pythonanywhere. 
 Админка находится по [адресу](http://polya.pythonanywhere.com/admin).
+(Сейчас не доступно).
 
 --- 
 
