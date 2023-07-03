@@ -1,6 +1,9 @@
+import datetime
+
 import requests
 from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand
+import time
 
 from places.models import Place, Image
 
@@ -12,11 +15,12 @@ def load_place(url):
 
     place, place_created = Place.objects.get_or_create(
         title=raw_place['title'],
+        lng=raw_place['coordinates']['lng'],
+        lat=raw_place['coordinates']['lat'],
         defaults={
             'description_short': raw_place['description_short'],
             'description_long': raw_place['description_long'],
-            'lng': raw_place['coordinates']['lng'],
-            'lat': raw_place['coordinates']['lat']}
+        }
     )
     if place_created:
         print(f'Добавляю место {raw_place["title"]}')
@@ -28,11 +32,12 @@ def load_place(url):
         response = requests.get(pic_url)
         response.raise_for_status()
 
-        img = ContentFile(response.content, name='file')
+        img = ContentFile(response.content, name=f'{time.strftime("%Y%m%d-%H%M%S")}')
 
-        image_field= Image.objects.create(
+        Image.objects.create(
             place=place,
-            image=img
+            image=img,
+            position=position,
         )
 
 

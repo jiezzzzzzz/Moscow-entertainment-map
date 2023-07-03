@@ -5,20 +5,20 @@ from django.http import JsonResponse
 from django.urls import reverse
 
 
-def serialized_json(location):
-    serialized = {'type': 'Feature',
+def serialize_location(location):
+    serialized_location = {'type': 'Feature',
                   'geometry': {
                                'type': 'Point',
                                'coordinates': [location.lng, location.lat]
-                                },
+                  },
                   'properties': {
                                'title': location.title,
                                'placeId': location.id,
                                'detailsUrl': (reverse('places', args=(location.id,)))
-                                }
                   }
+    }
 
-    return serialized
+    return serialized_location
 
 
 def start_page(request):
@@ -26,7 +26,7 @@ def start_page(request):
     context = {
         'data': {
             'type': 'FeatureCollection',
-            'features': [serialized_json(location) for location in locations]
+            'features': [serialize_location(location) for location in locations]
         }
     }
     return render(request, 'index.html', context=context)
