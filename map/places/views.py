@@ -6,16 +6,17 @@ from django.urls import reverse
 
 
 def serialize_location(location):
-    serialized_location = {'type': 'Feature',
-                  'geometry': {
-                               'type': 'Point',
-                               'coordinates': [location.lng, location.lat]
-                  },
-                  'properties': {
-                               'title': location.title,
-                               'placeId': location.id,
-                               'detailsUrl': (reverse('places', args=(location.id,)))
-                  }
+    serialized_location = {
+        'type': 'Feature',
+        'geometry': {
+            'type': 'Point',
+            'coordinates': [location.lng, location.lat]
+        },
+        'properties': {
+            'title': location.title,
+            'placeId': location.id,
+            'detailsUrl': (reverse('places', args=(location.id,)))
+        }
     }
 
     return serialized_location
